@@ -4,6 +4,8 @@ All notable changes to fs-tracker are documented here.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-18
+
 ### Added
 
 - Add a versioned JSON tracking policy for roots, exclusions, and capture
