@@ -1,0 +1,41 @@
+# ---- Rust / Cargo ----
+# 编译输出目录
+/target/
+
+# rustfmt 备份文件
+**/*.rs.bk
+
+# Windows 调试符号
+*.pdb
+
+# 注意：本项目为应用程序（binary），Cargo.lock 应提交到版本库，故此处不忽略。
+# 若改为库（library）项目，可取消下一行注释：
+# Cargo.lock
+
+# ---- 环境与密钥 ----
+.env
+.env.*
+!.env.example
+*.local
+
+# ---- 日志与临时文件 ----
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ---- IDE / 编辑器 ----
+.idea/
+.vscode/
+*.iml
+*.code-workspace
+
+# ---- AI 工具本地配置 ----
+.commandcode/
+
+# ---- 操作系统 ----
+.DS_Store
+Thumbs.db
+desktop.ini

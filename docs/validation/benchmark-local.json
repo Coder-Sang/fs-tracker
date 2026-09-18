@@ -1,0 +1,202 @@
+{
+  "cases": {
+    "large_edit": {
+      "baseline": {
+        "max_wall_ms": 60.055045,
+        "median_wall_ms": 38.756633,
+        "min_wall_ms": 36.409979,
+        "runs": [
+          {
+            "wall_ms": 38.756633
+          },
+          {
+            "wall_ms": 60.055045
+          },
+          {
+            "wall_ms": 36.409979
+          }
+        ]
+      },
+      "median_overhead_ratio": 6.421002077244429,
+      "tracked": {
+        "max_wall_ms": 250.087057,
+        "median_captured_bytes": 33554432,
+        "median_notifications": 53,
+        "median_wall_ms": 248.856421,
+        "min_wall_ms": 219.451737,
+        "runs": [
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 1,
+              "captured_bytes": 33554432,
+              "elapsed_ms": 107,
+              "final_changes": 1,
+              "notifications_received": 53,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 248.856421
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 1,
+              "captured_bytes": 33554432,
+              "elapsed_ms": 97,
+              "final_changes": 1,
+              "notifications_received": 53,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 219.451737
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 1,
+              "captured_bytes": 33554432,
+              "elapsed_ms": 111,
+              "final_changes": 1,
+              "notifications_received": 53,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 250.087057
+          }
+        ]
+      }
+    },
+    "read_scan": {
+      "baseline": {
+        "max_wall_ms": 23.341708,
+        "median_wall_ms": 21.480984,
+        "min_wall_ms": 19.082167,
+        "runs": [
+          {
+            "wall_ms": 19.082167
+          },
+          {
+            "wall_ms": 23.341708
+          },
+          {
+            "wall_ms": 21.480984
+          }
+        ]
+      },
+      "median_overhead_ratio": 1.7958295113482698,
+      "tracked": {
+        "max_wall_ms": 53.807913,
+        "median_captured_bytes": 0,
+        "median_notifications": 1053,
+        "median_wall_ms": 38.576185,
+        "min_wall_ms": 33.328912,
+        "runs": [
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 0,
+              "captured_bytes": 0,
+              "elapsed_ms": 31,
+              "final_changes": 0,
+              "notifications_received": 1053,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 33.328912
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 0,
+              "captured_bytes": 0,
+              "elapsed_ms": 37,
+              "final_changes": 0,
+              "notifications_received": 1053,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 38.576185
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 0,
+              "captured_bytes": 0,
+              "elapsed_ms": 52,
+              "final_changes": 0,
+              "notifications_received": 1053,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 53.807913
+          }
+        ]
+      }
+    },
+    "small_edits": {
+      "baseline": {
+        "max_wall_ms": 13.408293,
+        "median_wall_ms": 13.372628,
+        "min_wall_ms": 13.179349,
+        "runs": [
+          {
+            "wall_ms": 13.372628
+          },
+          {
+            "wall_ms": 13.179349
+          },
+          {
+            "wall_ms": 13.408293
+          }
+        ]
+      },
+      "median_overhead_ratio": 3.5045895242131913,
+      "tracked": {
+        "max_wall_ms": 49.482543,
+        "median_captured_bytes": 3290,
+        "median_notifications": 253,
+        "median_wall_ms": 46.865572,
+        "min_wall_ms": 43.500729,
+        "runs": [
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 200,
+              "captured_bytes": 3290,
+              "elapsed_ms": 34,
+              "final_changes": 200,
+              "notifications_received": 253,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 43.500729
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 200,
+              "captured_bytes": 3290,
+              "elapsed_ms": 35,
+              "final_changes": 200,
+              "notifications_received": 253,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 46.865572
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 200,
+              "captured_bytes": 3290,
+              "elapsed_ms": 39,
+              "final_changes": 200,
+              "notifications_received": 253,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 49.482543
+          }
+        ]
+      }
+    }
+  },
+  "environment": {
+    "architecture": "aarch64",
+    "base_dir": "/tmp",
+    "iterations": 3,
+    "kernel": "7.0.14"
+  }
+}

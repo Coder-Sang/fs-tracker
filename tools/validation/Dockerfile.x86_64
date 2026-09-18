@@ -1,0 +1,9 @@
+FROM --platform=$TARGETPLATFORM rust:1.85-bookworm AS build
+WORKDIR /src
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
+RUN cargo build --release && cp target/release/fs-tracker /tmp/fs-tracker
+
+FROM --platform=$TARGETPLATFORM debian:bookworm-slim
+COPY --from=build /tmp/fs-tracker /usr/local/bin/fs-tracker
+ENTRYPOINT ["/usr/local/bin/fs-tracker"]

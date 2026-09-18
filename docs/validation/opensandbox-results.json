@@ -1,0 +1,814 @@
+{
+  "recorded_at_utc": "2026-09-17T11:57:50.120578+00:00",
+  "environment": {
+    "sandbox_id": "<redacted>",
+    "image": "<internal-registry>/opensandbox-pi@sha256:883bf8e77b92ca63b6253249052203cae6431c753bf6307ade3ac012609415e9",
+    "exit_code": 0,
+    "text": "{\"kernel\": \"7.0.14\", \"arch\": \"aarch64\", \"status\": {\"Uid\": \"0\\t0\\t0\\t0\", \"Gid\": \"0\\t0\\t0\\t0\", \"CapInh\": \"0000000000000000\", \"CapPrm\": \"00000000a80425fb\", \"CapEff\": \"00000000a80425fb\", \"CapBnd\": \"00000000a80425fb\", \"CapAmb\": \"0000000000000000\", \"NoNewPrivs\": \"0\", \"Seccomp\": \"0\", \"Seccomp_filters\": \"0\"}, \"bwrap\": null, \"cc\": \"/usr/bin/cc\", \"setpriv\": \"/usr/bin/setpriv\", \"python\": \"3.11.2\", \"ptrace_scope\": \"0\"}"
+  },
+  "probe_sha256": "4811aaf1fc758a39de550ab02c6ff117ca314a131a029d103592f9d696c483e0",
+  "bubblewrap_deb_sha256": "d044ba1d7961d835669035fcd1e11121f1dc960a1a2e1c6489a93ea44e083557",
+  "results": [
+    {
+      "environment": "default",
+      "case": "original-security",
+      "exit_code": 0,
+      "result": {
+        "after": {
+          "created.txt": "AFTER-created\n",
+          "delete.txt": null,
+          "grandchild.txt": "AFTER-grandchild\n",
+          "node.txt": "AFTER-node\n",
+          "overwrite.txt": "AFTER-overwrite\n",
+          "read-only.txt": "UNCHANGED\n",
+          "readonly-create.txt": "",
+          "relative.txt": "AFTER-relative\n",
+          "replace.txt": "AFTER-replace\n",
+          "temporary.txt": null
+        },
+        "arch": "aarch64",
+        "before": {
+          "created.txt": null,
+          "delete.txt": "ORIGINAL-delete\n",
+          "grandchild.txt": "ORIGINAL-grandchild\n",
+          "node.txt": "ORIGINAL-node\n",
+          "overwrite.txt": "ORIGINAL-overwrite\n",
+          "readonly-create.txt": null,
+          "relative.txt": "ORIGINAL-relative\n",
+          "replace.txt": "ORIGINAL-replace\n",
+          "temporary.txt": null
+        },
+        "checks": {
+          "after_matches": true,
+          "before_preserved": true,
+          "child_exit_zero": true,
+          "descendant_inherits_filter": true,
+          "new_paths_absent_before": true,
+          "node_descendant_observed": true,
+          "read_only_open_not_notified": true,
+          "relative_path_observed": true,
+          "supervisor_cap_sys_admin_absent": true,
+          "supervisor_cap_sys_ptrace_absent": true
+        },
+        "child_exit": 0,
+        "events": [
+          {
+            "path": "overwrite.txt",
+            "pid": 69,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 69,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 69,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "replace.txt",
+            "pid": 69,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "delete.txt",
+            "pid": 69,
+            "relative_argument": false,
+            "syscall": "unlinkat"
+          },
+          {
+            "path": "created.txt",
+            "pid": 69,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "readonly-create.txt",
+            "pid": 69,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "relative.txt",
+            "pid": 69,
+            "relative_argument": true,
+            "syscall": "openat"
+          },
+          {
+            "path": "grandchild.txt",
+            "pid": 70,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "node.txt",
+            "pid": 71,
+            "relative_argument": false,
+            "syscall": "openat"
+          }
+        ],
+        "kernel": "7.0.14",
+        "notification_sizes": [
+          80,
+          24,
+          64
+        ],
+        "passed": true,
+        "supervisor_status": {
+          "CapAmb": "0000000000000000",
+          "CapBnd": "00000000a80425fb",
+          "CapEff": "00000000a80425fb",
+          "CapInh": "0000000000000000",
+          "CapPrm": "00000000a80425fb",
+          "Gid": "0\t0\t0\t0",
+          "NoNewPrivs": "0",
+          "Seccomp": "0",
+          "Seccomp_filters": "0",
+          "Uid": "0\t0\t0\t0"
+        }
+      },
+      "stderr": []
+    },
+    {
+      "environment": "default",
+      "case": "no-capabilities",
+      "exit_code": 0,
+      "result": {
+        "after": {
+          "created.txt": "AFTER-created\n",
+          "delete.txt": null,
+          "grandchild.txt": "AFTER-grandchild\n",
+          "node.txt": "AFTER-node\n",
+          "overwrite.txt": "AFTER-overwrite\n",
+          "read-only.txt": "UNCHANGED\n",
+          "readonly-create.txt": "",
+          "relative.txt": "AFTER-relative\n",
+          "replace.txt": "AFTER-replace\n",
+          "temporary.txt": null
+        },
+        "arch": "aarch64",
+        "before": {
+          "created.txt": null,
+          "delete.txt": "ORIGINAL-delete\n",
+          "grandchild.txt": "ORIGINAL-grandchild\n",
+          "node.txt": "ORIGINAL-node\n",
+          "overwrite.txt": "ORIGINAL-overwrite\n",
+          "readonly-create.txt": null,
+          "relative.txt": "ORIGINAL-relative\n",
+          "replace.txt": "ORIGINAL-replace\n",
+          "temporary.txt": null
+        },
+        "checks": {
+          "after_matches": true,
+          "before_preserved": true,
+          "child_exit_zero": true,
+          "descendant_inherits_filter": true,
+          "new_paths_absent_before": true,
+          "node_descendant_observed": true,
+          "read_only_open_not_notified": true,
+          "relative_path_observed": true,
+          "supervisor_cap_sys_admin_absent": true,
+          "supervisor_cap_sys_ptrace_absent": true
+        },
+        "child_exit": 0,
+        "events": [
+          {
+            "path": "overwrite.txt",
+            "pid": 79,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 79,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 79,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "replace.txt",
+            "pid": 79,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "delete.txt",
+            "pid": 79,
+            "relative_argument": false,
+            "syscall": "unlinkat"
+          },
+          {
+            "path": "created.txt",
+            "pid": 79,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "readonly-create.txt",
+            "pid": 79,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "relative.txt",
+            "pid": 79,
+            "relative_argument": true,
+            "syscall": "openat"
+          },
+          {
+            "path": "grandchild.txt",
+            "pid": 80,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "node.txt",
+            "pid": 81,
+            "relative_argument": false,
+            "syscall": "openat"
+          }
+        ],
+        "kernel": "7.0.14",
+        "notification_sizes": [
+          80,
+          24,
+          64
+        ],
+        "passed": true,
+        "supervisor_status": {
+          "CapAmb": "0000000000000000",
+          "CapBnd": "0000000000000000",
+          "CapEff": "0000000000000000",
+          "CapInh": "0000000000000000",
+          "CapPrm": "0000000000000000",
+          "Gid": "0\t0\t0\t0",
+          "NoNewPrivs": "1",
+          "Seccomp": "0",
+          "Seccomp_filters": "0",
+          "Uid": "0\t0\t0\t0"
+        }
+      },
+      "stderr": []
+    },
+    {
+      "environment": "default",
+      "case": "nonroot-65534",
+      "exit_code": 0,
+      "result": {
+        "after": {
+          "created.txt": "AFTER-created\n",
+          "delete.txt": null,
+          "grandchild.txt": "AFTER-grandchild\n",
+          "node.txt": "AFTER-node\n",
+          "overwrite.txt": "AFTER-overwrite\n",
+          "read-only.txt": "UNCHANGED\n",
+          "readonly-create.txt": "",
+          "relative.txt": "AFTER-relative\n",
+          "replace.txt": "AFTER-replace\n",
+          "temporary.txt": null
+        },
+        "arch": "aarch64",
+        "before": {
+          "created.txt": null,
+          "delete.txt": "ORIGINAL-delete\n",
+          "grandchild.txt": "ORIGINAL-grandchild\n",
+          "node.txt": "ORIGINAL-node\n",
+          "overwrite.txt": "ORIGINAL-overwrite\n",
+          "readonly-create.txt": null,
+          "relative.txt": "ORIGINAL-relative\n",
+          "replace.txt": "ORIGINAL-replace\n",
+          "temporary.txt": null
+        },
+        "checks": {
+          "after_matches": true,
+          "before_preserved": true,
+          "child_exit_zero": true,
+          "descendant_inherits_filter": true,
+          "new_paths_absent_before": true,
+          "node_descendant_observed": true,
+          "read_only_open_not_notified": true,
+          "relative_path_observed": true,
+          "supervisor_cap_sys_admin_absent": true,
+          "supervisor_cap_sys_ptrace_absent": true
+        },
+        "child_exit": 0,
+        "events": [
+          {
+            "path": "overwrite.txt",
+            "pid": 89,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 89,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 89,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "replace.txt",
+            "pid": 89,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "delete.txt",
+            "pid": 89,
+            "relative_argument": false,
+            "syscall": "unlinkat"
+          },
+          {
+            "path": "created.txt",
+            "pid": 89,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "readonly-create.txt",
+            "pid": 89,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "relative.txt",
+            "pid": 89,
+            "relative_argument": true,
+            "syscall": "openat"
+          },
+          {
+            "path": "grandchild.txt",
+            "pid": 90,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "node.txt",
+            "pid": 91,
+            "relative_argument": false,
+            "syscall": "openat"
+          }
+        ],
+        "kernel": "7.0.14",
+        "notification_sizes": [
+          80,
+          24,
+          64
+        ],
+        "passed": true,
+        "supervisor_status": {
+          "CapAmb": "0000000000000000",
+          "CapBnd": "00000000a80425fb",
+          "CapEff": "0000000000000000",
+          "CapInh": "0000000000000000",
+          "CapPrm": "0000000000000000",
+          "Gid": "65534\t65534\t65534\t65534",
+          "NoNewPrivs": "0",
+          "Seccomp": "0",
+          "Seccomp_filters": "0",
+          "Uid": "65534\t65534\t65534\t65534"
+        }
+      },
+      "stderr": []
+    },
+    {
+      "environment": "hardened",
+      "case": "original-security",
+      "exit_code": 0,
+      "result": {
+        "after": {
+          "created.txt": "AFTER-created\n",
+          "delete.txt": null,
+          "grandchild.txt": "AFTER-grandchild\n",
+          "node.txt": "AFTER-node\n",
+          "overwrite.txt": "AFTER-overwrite\n",
+          "read-only.txt": "UNCHANGED\n",
+          "readonly-create.txt": "",
+          "relative.txt": "AFTER-relative\n",
+          "replace.txt": "AFTER-replace\n",
+          "temporary.txt": null
+        },
+        "arch": "aarch64",
+        "before": {
+          "created.txt": null,
+          "delete.txt": "ORIGINAL-delete\n",
+          "grandchild.txt": "ORIGINAL-grandchild\n",
+          "node.txt": "ORIGINAL-node\n",
+          "overwrite.txt": "ORIGINAL-overwrite\n",
+          "readonly-create.txt": null,
+          "relative.txt": "ORIGINAL-relative\n",
+          "replace.txt": "ORIGINAL-replace\n",
+          "temporary.txt": null
+        },
+        "checks": {
+          "after_matches": true,
+          "before_preserved": true,
+          "child_exit_zero": true,
+          "descendant_inherits_filter": true,
+          "new_paths_absent_before": true,
+          "node_descendant_observed": true,
+          "read_only_open_not_notified": true,
+          "relative_path_observed": true,
+          "supervisor_cap_sys_admin_absent": true,
+          "supervisor_cap_sys_ptrace_absent": true
+        },
+        "child_exit": 0,
+        "events": [
+          {
+            "path": "overwrite.txt",
+            "pid": 54,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 54,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 54,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "replace.txt",
+            "pid": 54,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "delete.txt",
+            "pid": 54,
+            "relative_argument": false,
+            "syscall": "unlinkat"
+          },
+          {
+            "path": "created.txt",
+            "pid": 54,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "readonly-create.txt",
+            "pid": 54,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "relative.txt",
+            "pid": 54,
+            "relative_argument": true,
+            "syscall": "openat"
+          },
+          {
+            "path": "grandchild.txt",
+            "pid": 55,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "node.txt",
+            "pid": 56,
+            "relative_argument": false,
+            "syscall": "openat"
+          }
+        ],
+        "kernel": "7.0.14",
+        "notification_sizes": [
+          80,
+          24,
+          64
+        ],
+        "passed": true,
+        "supervisor_status": {
+          "CapAmb": "0000000000000000",
+          "CapBnd": "0000000000000000",
+          "CapEff": "0000000000000000",
+          "CapInh": "0000000000000000",
+          "CapPrm": "0000000000000000",
+          "Gid": "0\t0\t0\t0",
+          "NoNewPrivs": "1",
+          "Seccomp": "2",
+          "Seccomp_filters": "1",
+          "Uid": "0\t0\t0\t0"
+        }
+      },
+      "stderr": []
+    },
+    {
+      "environment": "default",
+      "case": "bwrap",
+      "exit_code": 1,
+      "result": null,
+      "stderr": [
+        "bwrap: Can't mount proc on /newroot/proc: Operation not permitted"
+      ]
+    },
+    {
+      "environment": "default",
+      "case": "bwrap-existing-pidns",
+      "exit_code": 0,
+      "result": {
+        "after": {
+          "created.txt": "AFTER-created\n",
+          "delete.txt": null,
+          "grandchild.txt": "AFTER-grandchild\n",
+          "node.txt": "AFTER-node\n",
+          "overwrite.txt": "AFTER-overwrite\n",
+          "read-only.txt": "UNCHANGED\n",
+          "readonly-create.txt": "",
+          "relative.txt": "AFTER-relative\n",
+          "replace.txt": "AFTER-replace\n",
+          "temporary.txt": null
+        },
+        "arch": "aarch64",
+        "before": {
+          "created.txt": null,
+          "delete.txt": "ORIGINAL-delete\n",
+          "grandchild.txt": "ORIGINAL-grandchild\n",
+          "node.txt": "ORIGINAL-node\n",
+          "overwrite.txt": "ORIGINAL-overwrite\n",
+          "readonly-create.txt": null,
+          "relative.txt": "ORIGINAL-relative\n",
+          "replace.txt": "ORIGINAL-replace\n",
+          "temporary.txt": null
+        },
+        "checks": {
+          "after_matches": true,
+          "before_preserved": true,
+          "child_exit_zero": true,
+          "descendant_inherits_filter": true,
+          "new_paths_absent_before": true,
+          "node_descendant_observed": true,
+          "read_only_open_not_notified": true,
+          "relative_path_observed": true,
+          "supervisor_cap_sys_admin_absent": true,
+          "supervisor_cap_sys_ptrace_absent": true
+        },
+        "child_exit": 0,
+        "events": [
+          {
+            "path": "overwrite.txt",
+            "pid": 102,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 102,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 102,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "replace.txt",
+            "pid": 102,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "delete.txt",
+            "pid": 102,
+            "relative_argument": false,
+            "syscall": "unlinkat"
+          },
+          {
+            "path": "created.txt",
+            "pid": 102,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "readonly-create.txt",
+            "pid": 102,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "relative.txt",
+            "pid": 102,
+            "relative_argument": true,
+            "syscall": "openat"
+          },
+          {
+            "path": "grandchild.txt",
+            "pid": 103,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "node.txt",
+            "pid": 104,
+            "relative_argument": false,
+            "syscall": "openat"
+          }
+        ],
+        "kernel": "7.0.14",
+        "notification_sizes": [
+          80,
+          24,
+          64
+        ],
+        "passed": true,
+        "supervisor_status": {
+          "CapAmb": "0000000000000000",
+          "CapBnd": "00000000a80425fb",
+          "CapEff": "00000000a80425fb",
+          "CapInh": "0000000000000000",
+          "CapPrm": "00000000a80425fb",
+          "Gid": "0\t0\t0\t0",
+          "NoNewPrivs": "1",
+          "Seccomp": "0",
+          "Seccomp_filters": "0",
+          "Uid": "0\t0\t0\t0"
+        }
+      },
+      "stderr": []
+    },
+    {
+      "environment": "default",
+      "case": "bwrap-no-capabilities",
+      "exit_code": 1,
+      "result": null,
+      "stderr": [
+        "bwrap: setting up uid map: Operation not permitted"
+      ]
+    },
+    {
+      "environment": "default",
+      "case": "bwrap-nonroot",
+      "exit_code": 1,
+      "result": null,
+      "stderr": [
+        "bwrap: Can't mount proc on /newroot/proc: Operation not permitted"
+      ]
+    },
+    {
+      "environment": "default",
+      "case": "bwrap-existing-pidns-nonroot",
+      "exit_code": 0,
+      "result": {
+        "after": {
+          "created.txt": "AFTER-created\n",
+          "delete.txt": null,
+          "grandchild.txt": "AFTER-grandchild\n",
+          "node.txt": "AFTER-node\n",
+          "overwrite.txt": "AFTER-overwrite\n",
+          "read-only.txt": "UNCHANGED\n",
+          "readonly-create.txt": "",
+          "relative.txt": "AFTER-relative\n",
+          "replace.txt": "AFTER-replace\n",
+          "temporary.txt": null
+        },
+        "arch": "aarch64",
+        "before": {
+          "created.txt": null,
+          "delete.txt": "ORIGINAL-delete\n",
+          "grandchild.txt": "ORIGINAL-grandchild\n",
+          "node.txt": "ORIGINAL-node\n",
+          "overwrite.txt": "ORIGINAL-overwrite\n",
+          "readonly-create.txt": null,
+          "relative.txt": "ORIGINAL-relative\n",
+          "replace.txt": "ORIGINAL-replace\n",
+          "temporary.txt": null
+        },
+        "checks": {
+          "after_matches": true,
+          "before_preserved": true,
+          "child_exit_zero": true,
+          "descendant_inherits_filter": true,
+          "new_paths_absent_before": true,
+          "node_descendant_observed": true,
+          "read_only_open_not_notified": true,
+          "relative_path_observed": true,
+          "supervisor_cap_sys_admin_absent": true,
+          "supervisor_cap_sys_ptrace_absent": true
+        },
+        "child_exit": 0,
+        "events": [
+          {
+            "path": "overwrite.txt",
+            "pid": 117,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 117,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "temporary.txt",
+            "pid": 117,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "replace.txt",
+            "pid": 117,
+            "relative_argument": false,
+            "syscall": "renameat"
+          },
+          {
+            "path": "delete.txt",
+            "pid": 117,
+            "relative_argument": false,
+            "syscall": "unlinkat"
+          },
+          {
+            "path": "created.txt",
+            "pid": 117,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "readonly-create.txt",
+            "pid": 117,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "relative.txt",
+            "pid": 117,
+            "relative_argument": true,
+            "syscall": "openat"
+          },
+          {
+            "path": "grandchild.txt",
+            "pid": 118,
+            "relative_argument": false,
+            "syscall": "openat"
+          },
+          {
+            "path": "node.txt",
+            "pid": 119,
+            "relative_argument": false,
+            "syscall": "openat"
+          }
+        ],
+        "kernel": "7.0.14",
+        "notification_sizes": [
+          80,
+          24,
+          64
+        ],
+        "passed": true,
+        "supervisor_status": {
+          "CapAmb": "0000000000000000",
+          "CapBnd": "0000000000000000",
+          "CapEff": "0000000000000000",
+          "CapInh": "0000000000000000",
+          "CapPrm": "0000000000000000",
+          "Gid": "65534\t65534\t65534\t65534",
+          "NoNewPrivs": "1",
+          "Seccomp": "0",
+          "Seccomp_filters": "0",
+          "Uid": "65534\t65534\t65534\t65534"
+        }
+      },
+      "stderr": []
+    },
+    {
+      "environment": "hardened",
+      "case": "bwrap",
+      "exit_code": 1,
+      "result": null,
+      "stderr": [
+        "bwrap: No permissions to create new namespace, likely because the kernel does not allow non-privileged user namespaces. See <https://deb.li/bubblewrap> or <file:///usr/share/doc/bubblewrap/README.Debian.gz>."
+      ]
+    },
+    {
+      "environment": "hardened",
+      "case": "bwrap-existing-pidns",
+      "exit_code": 1,
+      "result": null,
+      "stderr": [
+        "bwrap: No permissions to create new namespace, likely because the kernel does not allow non-privileged user namespaces. See <https://deb.li/bubblewrap> or <file:///usr/share/doc/bubblewrap/README.Debian.gz>."
+      ]
+    }
+  ]
+}

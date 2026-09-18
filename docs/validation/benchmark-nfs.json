@@ -1,0 +1,202 @@
+{
+  "cases": {
+    "large_edit": {
+      "baseline": {
+        "max_wall_ms": 1964.983362,
+        "median_wall_ms": 66.930743,
+        "min_wall_ms": 52.643748,
+        "runs": [
+          {
+            "wall_ms": 1964.983362
+          },
+          {
+            "wall_ms": 66.930743
+          },
+          {
+            "wall_ms": 52.643748
+          }
+        ]
+      },
+      "median_overhead_ratio": 5.142014141393887,
+      "tracked": {
+        "max_wall_ms": 349.380312,
+        "median_captured_bytes": 33554432,
+        "median_notifications": 53,
+        "median_wall_ms": 344.158827,
+        "min_wall_ms": 320.456049,
+        "runs": [
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 1,
+              "captured_bytes": 33554432,
+              "elapsed_ms": 171,
+              "final_changes": 1,
+              "notifications_received": 53,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 344.158827
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 1,
+              "captured_bytes": 33554432,
+              "elapsed_ms": 189,
+              "final_changes": 1,
+              "notifications_received": 53,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 349.380312
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 1,
+              "captured_bytes": 33554432,
+              "elapsed_ms": 157,
+              "final_changes": 1,
+              "notifications_received": 53,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 320.456049
+          }
+        ]
+      }
+    },
+    "read_scan": {
+      "baseline": {
+        "max_wall_ms": 284.631865,
+        "median_wall_ms": 245.682737,
+        "min_wall_ms": 158.684722,
+        "runs": [
+          {
+            "wall_ms": 245.682737
+          },
+          {
+            "wall_ms": 284.631865
+          },
+          {
+            "wall_ms": 158.684722
+          }
+        ]
+      },
+      "median_overhead_ratio": 0.939686873481876,
+      "tracked": {
+        "max_wall_ms": 3628.887855,
+        "median_captured_bytes": 0,
+        "median_notifications": 1053,
+        "median_wall_ms": 230.864843,
+        "min_wall_ms": 152.873437,
+        "runs": [
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 0,
+              "captured_bytes": 0,
+              "elapsed_ms": 139,
+              "final_changes": 0,
+              "notifications_received": 1053,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 152.873437
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 0,
+              "captured_bytes": 0,
+              "elapsed_ms": 3615,
+              "final_changes": 0,
+              "notifications_received": 1053,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 3628.887855
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 0,
+              "captured_bytes": 0,
+              "elapsed_ms": 217,
+              "final_changes": 0,
+              "notifications_received": 1053,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 230.864843
+          }
+        ]
+      }
+    },
+    "small_edits": {
+      "baseline": {
+        "max_wall_ms": 3894.729247,
+        "median_wall_ms": 294.15855,
+        "min_wall_ms": 263.489181,
+        "runs": [
+          {
+            "wall_ms": 263.489181
+          },
+          {
+            "wall_ms": 3894.729247
+          },
+          {
+            "wall_ms": 294.15855
+          }
+        ]
+      },
+      "median_overhead_ratio": 3.550214933409211,
+      "tracked": {
+        "max_wall_ms": 3975.489971,
+        "median_captured_bytes": 3290,
+        "median_notifications": 253,
+        "median_wall_ms": 1044.326077,
+        "min_wall_ms": 880.814953,
+        "runs": [
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 200,
+              "captured_bytes": 3290,
+              "elapsed_ms": 3910,
+              "final_changes": 200,
+              "notifications_received": 253,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 3975.489971
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 200,
+              "captured_bytes": 3290,
+              "elapsed_ms": 972,
+              "final_changes": 200,
+              "notifications_received": 253,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 1044.326077
+          },
+          {
+            "state": "finished",
+            "tracker_metrics": {
+              "candidate_paths": 200,
+              "captured_bytes": 3290,
+              "elapsed_ms": 817,
+              "final_changes": 200,
+              "notifications_received": 253,
+              "queue_bypassed": 0
+            },
+            "wall_ms": 880.814953
+          }
+        ]
+      }
+    }
+  },
+  "environment": {
+    "architecture": "aarch64",
+    "base_dir": "/mnt/shared",
+    "iterations": 3,
+    "kernel": "7.0.14"
+  }
+}
