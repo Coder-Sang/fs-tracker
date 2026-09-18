@@ -187,6 +187,7 @@ pub fn run(config: RunConfig) -> io::Result<TargetResult> {
         config.output,
         config.roots,
         config.exclusions,
+        config.recursive_exclusions,
         config.limits,
         config.capture_timeout,
         config.capture_helper_delay,

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 pub const SCHEMA_VERSION: u32 = 1;
-pub const POLICY_VERSION: u32 = 1;
+pub const POLICY_VERSION: u32 = 2;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -36,6 +36,8 @@ pub struct Coverage {
     pub unsupported_features: Vec<String>,
     #[serde(default)]
     pub configured_exclusions: Vec<ConfiguredExclusion>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub configured_recursive_exclusions: Vec<String>,
     pub gaps: Vec<Gap>,
 }
 

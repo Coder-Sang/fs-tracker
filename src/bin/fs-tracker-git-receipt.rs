@@ -7,6 +7,9 @@ use fs_tracker::git_adapter::{self, GitReceiptConfig};
 #[derive(Debug, Parser)]
 #[command(name = "fs-tracker-git-receipt", version, about)]
 struct Cli {
+    /// Versioned JSON tracking policy used by the tracker run.
+    #[arg(long, value_name = "PATH", conflicts_with = "projects")]
+    config: Option<PathBuf>,
     /// Completed tracker output directory.
     #[arg(long)]
     tracker_output: PathBuf,
@@ -22,7 +25,7 @@ struct Cli {
     #[arg(long)]
     workspace_id: String,
     /// Root mapping as ID=SANDBOX_PROJECT_PATH. May be repeated.
-    #[arg(long = "project", required = true)]
+    #[arg(long = "project", required_unless_present = "config")]
     projects: Vec<String>,
     /// Run-unique ref updated to the report commit.
     #[arg(long)]
@@ -40,10 +43,11 @@ fn main() {
 }
 
 fn execute(args: Cli) -> Result<(), Box<dyn std::error::Error>> {
-    let projects = config::parse_roots(&args.projects)?
-        .into_iter()
-        .map(|root| (root.id, root.path))
-        .collect();
+    let roots = match args.config {
+        Some(path) => config::load_tracking_policy(&path)?.roots,
+        None => config::parse_roots(&args.projects)?,
+    };
+    let projects = roots.into_iter().map(|root| (root.id, root.path)).collect();
     let receipt = git_adapter::create_receipt(GitReceiptConfig {
         tracker_output: args.tracker_output,
         repository: args.repository,

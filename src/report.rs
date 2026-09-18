@@ -116,6 +116,7 @@ pub fn finish(
                     display_path: exclusion.relative.to_string_lossy().into_owned(),
                 })
                 .collect(),
+            configured_recursive_exclusions: store.recursive_exclusions().to_vec(),
             gaps: store.gaps.clone(),
         },
         metrics,

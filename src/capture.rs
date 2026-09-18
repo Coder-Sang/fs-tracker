@@ -54,10 +54,88 @@ struct CaptureHelper {
     process: Option<HelperProcess>,
 }
 
+struct RootIndex {
+    roots: Vec<Root>,
+    by_path: HashMap<PathBuf, usize>,
+}
+
+impl RootIndex {
+    fn new(roots: Vec<Root>) -> Self {
+        let by_path = roots
+            .iter()
+            .enumerate()
+            .map(|(index, root)| (root.path.clone(), index))
+            .collect();
+        Self { roots, by_path }
+    }
+
+    fn find(&self, path: &Path) -> Option<&Root> {
+        let mut candidate = Some(path);
+        while let Some(current) = candidate {
+            if let Some(index) = self.by_path.get(current) {
+                return self.roots.get(*index);
+            }
+            candidate = current.parent();
+        }
+        None
+    }
+}
+
+struct ExclusionIndex {
+    configured: Vec<Exclusion>,
+    exact_by_root: HashMap<String, HashSet<PathBuf>>,
+    recursive: HashSet<String>,
+    configured_recursive: Vec<String>,
+}
+
+impl ExclusionIndex {
+    fn new(configured: Vec<Exclusion>, mut configured_recursive: Vec<String>) -> Self {
+        let mut exact_by_root: HashMap<String, HashSet<PathBuf>> = HashMap::new();
+        for exclusion in &configured {
+            exact_by_root
+                .entry(exclusion.root_id.clone())
+                .or_default()
+                .insert(exclusion.relative.clone());
+        }
+        configured_recursive.sort();
+        configured_recursive.dedup();
+        let recursive = configured_recursive.iter().cloned().collect();
+        Self {
+            configured,
+            exact_by_root,
+            recursive,
+            configured_recursive,
+        }
+    }
+
+    fn contains(&self, root_id: &str, relative: &Path) -> bool {
+        let exact_match = self.exact_by_root.get(root_id).is_some_and(|exclusions| {
+            let mut candidate = Some(relative);
+            while let Some(current) = candidate {
+                if exclusions.contains(current) {
+                    return true;
+                }
+                candidate = current
+                    .parent()
+                    .filter(|parent| !parent.as_os_str().is_empty());
+            }
+            false
+        });
+        exact_match
+            || relative.components().any(|component| {
+                let Component::Normal(name) = component else {
+                    return false;
+                };
+                name.to_str()
+                    .is_some_and(|name| self.recursive.contains(name))
+            })
+    }
+}
+
 pub struct CaptureStore {
     output: PathBuf,
-    roots: Vec<Root>,
-    exclusions: Vec<Exclusion>,
+    roots: RootIndex,
+    exclusions: ExclusionIndex,
     limits: Limits,
     capture_timeout: Duration,
     capture_helper_delay: Duration,
@@ -73,6 +151,7 @@ impl CaptureStore {
         output: PathBuf,
         roots: Vec<Root>,
         exclusions: Vec<Exclusion>,
+        recursive_exclusions: Vec<String>,
         limits: Limits,
         capture_timeout: Duration,
         capture_helper_delay: Duration,
@@ -89,8 +168,8 @@ impl CaptureStore {
         }
         Ok(Self {
             output,
-            roots,
-            exclusions,
+            roots: RootIndex::new(roots),
+            exclusions: ExclusionIndex::new(exclusions, recursive_exclusions),
             limits,
             capture_timeout,
             capture_helper_delay,
@@ -126,28 +205,18 @@ impl CaptureStore {
 
     pub fn locate(&self, path: &Path) -> Option<(PathKey, PathBuf)> {
         let normalized = normalize(path);
-        self.roots.iter().find_map(|root| {
-            normalized
-                .strip_prefix(&root.path)
-                .ok()
-                .and_then(|relative| {
-                    if relative.as_os_str().is_empty() {
-                        return None;
-                    }
-                    if self.exclusions.iter().any(|exclusion| {
-                        exclusion.root_id == root.id && relative.starts_with(&exclusion.relative)
-                    }) {
-                        return None;
-                    }
-                    Some((
-                        PathKey {
-                            root_id: root.id.clone(),
-                            relative: relative.as_os_str().as_bytes().to_vec(),
-                        },
-                        normalized.clone(),
-                    ))
-                })
-        })
+        let root = self.roots.find(&normalized)?;
+        let relative = normalized.strip_prefix(&root.path).ok()?;
+        if relative.as_os_str().is_empty() || self.exclusions.contains(&root.id, relative) {
+            return None;
+        }
+        Some((
+            PathKey {
+                root_id: root.id.clone(),
+                relative: relative.as_os_str().as_bytes().to_vec(),
+            },
+            normalized,
+        ))
     }
 
     pub fn capture_before(&mut self, path: &Path) {
@@ -211,7 +280,11 @@ impl CaptureStore {
     }
 
     pub fn exclusions(&self) -> &[Exclusion] {
-        &self.exclusions
+        &self.exclusions.configured
+    }
+
+    pub fn recursive_exclusions(&self) -> &[String] {
+        &self.exclusions.configured_recursive
     }
 
     pub fn helper_pid(&self) -> Option<libc::pid_t> {
@@ -678,6 +751,7 @@ mod tests {
             output.clone(),
             Vec::new(),
             Vec::new(),
+            Vec::new(),
             Limits::default(),
             Duration::from_secs(1),
             Duration::ZERO,
@@ -685,6 +759,51 @@ mod tests {
         .unwrap();
 
         assert_eq!(fs::metadata(store.output()).unwrap().mode() & 0o777, 0o700);
+    }
+
+    #[test]
+    fn root_index_finds_non_overlapping_prefix_without_linear_matching() {
+        let index = RootIndex::new(vec![
+            Root {
+                id: "third".into(),
+                path: PathBuf::from("/projects/third"),
+            },
+            Root {
+                id: "first".into(),
+                path: PathBuf::from("/projects/first"),
+            },
+            Root {
+                id: "second".into(),
+                path: PathBuf::from("/projects/second"),
+            },
+        ]);
+
+        assert_eq!(
+            index
+                .find(Path::new("/projects/second/src/main.rs"))
+                .map(|root| root.id.as_str()),
+            Some("second")
+        );
+        assert!(index.find(Path::new("/projects/second-old/file")).is_none());
+        assert!(index.find(Path::new("/outside/file")).is_none());
+    }
+
+    #[test]
+    fn exclusion_index_supports_exact_and_recursive_component_rules() {
+        let index = ExclusionIndex::new(
+            vec![Exclusion {
+                root_id: "main".into(),
+                relative: PathBuf::from("generated/cache"),
+            }],
+            vec![".git".into(), "node_modules".into()],
+        );
+
+        assert!(index.contains("main", Path::new("generated/cache/file")));
+        assert!(!index.contains("other", Path::new("generated/cache/file")));
+        assert!(index.contains("main", Path::new("packages/app/node_modules/pkg/index.js")));
+        assert!(index.contains("main", Path::new("nested/.git/index")));
+        assert!(!index.contains("main", Path::new("nested/.github/workflow.yml")));
+        assert!(!index.contains("main", Path::new("nested/node_modules-old/file")));
     }
 
     #[test]

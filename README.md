@@ -22,8 +22,9 @@ target/release/fs-tracker doctor --json
 ```bash
 fs-tracker run \
   --root project=/projects/project \
-  --exclude project=.venv \
-  --exclude project=node_modules \
+  --exclude project=generated/cache \
+  --exclude-recursive .git \
+  --exclude-recursive node_modules \
   --output /run/fs-tracker/task-001 \
   -- pi --mode rpc
 
@@ -41,7 +42,33 @@ fs-tracker run \
 # 另一控制进程结束本轮：printf 'finish\n' > /run/fs-tracker/task-002.finish
 ```
 
-可以重复传入 `--root ID=PATH`。root 必须存在、互不重叠；output 必须是尚不存在的新目录，且不能位于 root 内。`--exclude ROOT_ID=RELATIVE_PATH` 可重复传入，按路径组件排除整个子树，例如 `.venv` 不会误匹配 `.venv-old`。规则必须引用已有 root，且不能是绝对路径、`.` 或包含 `..`。tracker 不会自动读取 `.gitignore`。`--` 后的 argv 直接传给 `execvp`，不会拼成 shell 命令。
+可以重复传入 `--root ID=PATH`。root 必须存在、互不重叠；output 必须是尚不存在的新目录，且不能位于 root 内。`--exclude ROOT_ID=RELATIVE_PATH` 保持原有语义：只排除指定 root 下该相对路径对应的子树。`--exclude-recursive NAME` 按完整目录组件在所有 root 的任意深度排除同名子树，例如 `.git` 不会误匹配 `.github`。两类规则都可重复传入，且 tracker 不会自动读取 `.gitignore`。`--` 后的 argv 直接传给 `execvp`，不会拼成 shell 命令。
+
+root 和排除规则较多时，可改用版本化 JSON policy，避免把配置展开到进程参数中：
+
+```json
+{
+  "schemaVersion": 1,
+  "roots": [
+    {"id": "project", "path": "/projects/project"},
+    {"id": "shared", "path": "/projects/shared"}
+  ],
+  "exclusions": [
+    {"rootId": "project", "path": "generated/cache"}
+  ],
+  "recursiveExclusions": [".git", "node_modules", ".venv"],
+  "limits": {"maxFiles": 20000}
+}
+```
+
+```bash
+fs-tracker run \
+  --config /run/fs-tracker/task-001-policy.json \
+  --output /run/fs-tracker/task-001 \
+  -- pi --mode rpc
+```
+
+`--config` 不能与 `--root`、`--exclude`、`--exclude-recursive` 或四个 `--max-*` 配额参数混用。`limits` 可省略或只提供部分字段，缺失值使用下文列出的当前默认值。policy 最大 16 MiB，拒绝未知字段和不支持的 `schemaVersion`，并执行与 CLI 相同的 root、重叠路径和 exclusion 校验。原有 `--root` 和 `--exclude` 命令行方式继续受支持。
 
 目标命令的 stdin/stdout/stderr 保持原样，额外继承 FD 会在 exec 前关闭。若可写 stdio 指向 tracked root，tracker 会在启动目标前捕获该文件。CLI 保留目标退出码；报告状态需单独读取 `status.json` 或 `report.json`。
 
@@ -73,7 +100,7 @@ output/
   changes.patch
 ```
 
-`report.json` 使用 `schema_version = 1`。路径始终提供无损的 `path_bytes_base64`；UTF-8 文件名另外提供 `display_path`。文件状态明确区分 `absent`、`present` 和 `unavailable`。`state` 为 `finished`、`partial` 或 `failed`，`assurance` 始终为 `best_effort`。`coverage.configured_exclusions` 记录本次实际采用的排除范围；排除是声明范围缩小，不会将报告降为 `partial`。`metrics` 记录运行耗时、通知数、队列旁路数、候选路径、捕获字节和最终变化数。
+`report.json` 使用 `schema_version = 1`、`policy_version = 2`。路径始终提供无损的 `path_bytes_base64`；UTF-8 文件名另外提供 `display_path`。文件状态明确区分 `absent`、`present` 和 `unavailable`。`state` 为 `finished`、`partial` 或 `failed`，`assurance` 始终为 `best_effort`。`coverage.configured_exclusions` 记录 root-relative 排除范围，`coverage.configured_recursive_exclusions` 记录递归组件排除范围；排除是声明范围缩小，不会将报告降为 `partial`。`metrics` 记录运行耗时、通知数、队列旁路数、候选路径、捕获字节和最终变化数。
 
 文本文件生成 unified diff。二进制文件、非 UTF-8 内容、超限内容和读取失败仍保留变化信息及对象或原因。修改后恢复原内容、创建后删除等无最终净变化的候选不会出现在报告中。
 
@@ -92,7 +119,7 @@ fs-tracker-git-receipt \
   --report-ref refs/fs-tracker/reports/task-001
 ```
 
-adapter 创建专用 bare repository、确定性的 baseline/report commit 和 run 唯一 ref。默认拒绝 `partial` 报告；只有明确接受降级语义时才使用 `--allow-partial`。
+adapter 创建专用 bare repository、确定性的 baseline/report commit 和 run 唯一 ref。默认拒绝 `partial` 报告；只有明确接受降级语义时才使用 `--allow-partial`。当 tracker 使用 policy 文件时，可用 `--config /run/fs-tracker/task-001-policy.json` 代替所有 `--project ID=PATH`；原有可重复 `--project` 参数继续受支持，两种方式不能混用。
 
 Gateway 侧 OpenSandbox 试点通过 provider env 显式启用：
 

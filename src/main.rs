@@ -32,15 +32,33 @@ enum Command {
 
 #[derive(Debug, Args)]
 struct RunArgs {
+    /// Versioned JSON tracking policy. Cannot be combined with root/exclude arguments.
+    #[arg(
+        long,
+        value_name = "PATH",
+        conflicts_with_all = [
+            "roots",
+            "exclusions",
+            "recursive_exclusions",
+            "max_files",
+            "max_file_bytes",
+            "max_total_bytes",
+            "max_diff_bytes"
+        ]
+    )]
+    config: Option<PathBuf>,
     /// Tracked root as ID=PATH. May be repeated.
-    #[arg(long = "root", required = true)]
+    #[arg(long = "root", required_unless_present = "config")]
     roots: Vec<String>,
     /// New directory in which tracker artifacts will be written.
     #[arg(long)]
     output: PathBuf,
-    /// Excluded subtree as ROOT_ID=RELATIVE_PATH. May be repeated.
-    #[arg(long = "exclude")]
+    /// Root-relative excluded subtree as ROOT_ID=RELATIVE_PATH. May be repeated.
+    #[arg(long = "exclude", requires = "roots")]
     exclusions: Vec<String>,
+    /// Directory name excluded at any depth beneath every tracked root.
+    #[arg(long = "exclude-recursive", requires = "roots")]
+    recursive_exclusions: Vec<String>,
     #[arg(long, default_value_t = 10_000)]
     max_files: usize,
     #[arg(long, default_value_t = 33_554_432)]
@@ -143,20 +161,34 @@ fn execute(cli: Cli) -> Result<i32, Box<dyn std::error::Error>> {
             Ok(if report.supported { 0 } else { 1 })
         }
         Command::Run(args) => {
-            let roots = config::parse_roots(&args.roots)?;
-            let exclusions = config::parse_exclusions(&args.exclusions, &roots)?;
-            config::validate_output(&args.output, &roots)?;
+            let policy = match args.config {
+                Some(path) => config::load_tracking_policy(&path)?,
+                None => {
+                    let roots = config::parse_roots(&args.roots)?;
+                    let exclusions = config::parse_exclusions(&args.exclusions, &roots)?;
+                    let recursive_exclusions =
+                        config::parse_recursive_exclusions(&args.recursive_exclusions)?;
+                    config::TrackingPolicy {
+                        roots,
+                        exclusions,
+                        recursive_exclusions,
+                        limits: Limits {
+                            max_files: args.max_files,
+                            max_file_bytes: args.max_file_bytes,
+                            max_total_bytes: args.max_total_bytes,
+                            max_diff_bytes: args.max_diff_bytes,
+                        },
+                    }
+                }
+            };
+            config::validate_output(&args.output, &policy.roots)?;
             let result = fs_tracker::supervisor::run(RunConfig {
-                roots,
-                exclusions,
+                roots: policy.roots,
+                exclusions: policy.exclusions,
+                recursive_exclusions: policy.recursive_exclusions,
                 output: args.output,
                 command: args.command,
-                limits: Limits {
-                    max_files: args.max_files,
-                    max_file_bytes: args.max_file_bytes,
-                    max_total_bytes: args.max_total_bytes,
-                    max_diff_bytes: args.max_diff_bytes,
-                },
+                limits: policy.limits,
                 capture_workers: args.capture_workers,
                 notification_queue: args.notification_queue,
                 finish_fd: args.finish_fd,

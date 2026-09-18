@@ -176,6 +176,84 @@ mv "$1/move-out.txt" "$1/.venv/moved-out.txt"
 }
 
 #[test]
+fn policy_file_tracks_multiple_roots_and_recursive_exclusions() {
+    let parent = tempdir().unwrap();
+    let first = parent.path().join("first");
+    let second = parent.path().join("second");
+    let output = parent.path().join("result");
+    let policy = parent.path().join("policy.json");
+    fs::create_dir_all(first.join("nested/.git")).unwrap();
+    fs::create_dir_all(second.join("packages/app/node_modules/pkg")).unwrap();
+    fs::write(first.join("nested/.git/index"), b"before\n").unwrap();
+    fs::write(
+        second.join("packages/app/node_modules/pkg/index.js"),
+        b"before\n",
+    )
+    .unwrap();
+    fs::write(second.join("tracked.txt"), b"before\n").unwrap();
+    fs::write(
+        &policy,
+        serde_json::to_vec(&serde_json::json!({
+            "schemaVersion": 1,
+            "roots": [
+                {"id": "first", "path": first},
+                {"id": "second", "path": second},
+            ],
+            "recursiveExclusions": [".git", "node_modules"],
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    let script = r#"
+printf 'ignored\n' > "$1/nested/.git/index"
+printf 'ignored\n' > "$2/packages/app/node_modules/pkg/index.js"
+printf 'after\n' > "$2/tracked.txt"
+"#;
+
+    let status = Command::new(binary())
+        .arg("run")
+        .arg("--config")
+        .arg(&policy)
+        .arg("--output")
+        .arg(&output)
+        .args(["--", "/bin/sh", "-c", script, "test"])
+        .arg(&first)
+        .arg(&second)
+        .status()
+        .unwrap();
+
+    assert!(status.success());
+    let report: Report =
+        serde_json::from_slice(&fs::read(output.join("report.json")).unwrap()).unwrap();
+    assert_eq!(report.changes.len(), 1);
+    assert_eq!(report.changes[0].root_id, "second");
+    assert_eq!(
+        report.changes[0].display_path.as_deref(),
+        Some("tracked.txt")
+    );
+    assert_eq!(
+        report.coverage.configured_recursive_exclusions,
+        vec![".git", "node_modules"]
+    );
+
+    let adapted = Command::new(git_adapter_binary())
+        .arg("--config")
+        .arg(&policy)
+        .arg("--tracker-output")
+        .arg(&output)
+        .arg("--repository")
+        .arg(parent.path().join("report.git"))
+        .arg("--receipt")
+        .arg(parent.path().join("receipt.json"))
+        .args(["--run-id", "run-policy", "--workspace-id"])
+        .arg("a".repeat(64))
+        .args(["--report-ref", "refs/fs-tracker/reports/run-policy"])
+        .status()
+        .unwrap();
+    assert!(adapted.success());
+}
+
+#[test]
 fn finish_control_fd_stops_a_long_running_target() {
     let parent = tempdir().unwrap();
     let root = parent.path().join("root");
