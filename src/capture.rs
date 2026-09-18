@@ -4,7 +4,7 @@ use std::fs::{self, File, OpenOptions};
 use std::io::{self, BufRead, BufReader, Read, Write};
 use std::os::fd::{AsRawFd, FromRawFd, OwnedFd};
 use std::os::unix::ffi::{OsStrExt, OsStringExt};
-use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
+use std::os::unix::fs::{DirBuilderExt, MetadataExt, OpenOptionsExt};
 use std::path::{Component, Path, PathBuf};
 use std::time::{Duration, Instant};
 
@@ -77,8 +77,8 @@ impl CaptureStore {
         capture_timeout: Duration,
         capture_helper_delay: Duration,
     ) -> io::Result<Self> {
-        fs::create_dir(&output)?;
-        fs::set_permissions(&output, fs::Permissions::from_mode(0o700))?;
+        let mut output_builder = fs::DirBuilder::new();
+        output_builder.mode(0o700).create(&output)?;
         fs::create_dir(output.join("objects"))?;
         for name in ["journal.jsonl", "diagnostics.jsonl"] {
             OpenOptions::new()
@@ -669,6 +669,23 @@ pub fn normalize(path: &Path) -> PathBuf {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn creates_capture_output_with_private_mode() {
+        let temporary = tempfile::tempdir().unwrap();
+        let output = temporary.path().join("capture");
+        let store = CaptureStore::new(
+            output.clone(),
+            Vec::new(),
+            Vec::new(),
+            Limits::default(),
+            Duration::from_secs(1),
+            Duration::ZERO,
+        )
+        .unwrap();
+
+        assert_eq!(fs::metadata(store.output()).unwrap().mode() & 0o777, 0o700);
+    }
 
     #[test]
     fn normalizes_lexically() {
